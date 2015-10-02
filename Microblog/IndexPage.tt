@@ -1,0 +1,74 @@
+﻿<#@ template language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Random Projects</title>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	
+	<style type="text/css" media="screen">
+		html {
+			max-width: 1024px;
+			padding-left: 2em;
+			padding-right: 2em;
+			padding-top: 1em;
+			padding-bottom: 1em;
+			margin-left: auto;
+			margin-right: auto;
+			background-color: cornflowerblue;
+		}
+		h1 {
+			margin: 0px;
+		}
+		div.head {
+			text-align: center;
+		}
+		div.head h1 {
+			margin: 0em;
+		}
+		div.entry {
+			width: 100%;
+			background-color: silver;
+			border-style: solid;
+			border-radius: 0.5em;
+			border-width: 1px;
+			border-color: transparent;
+			margin-top: 1em;
+			margin-bottom: 1em;
+			padding: 0.5em;
+		}
+		div.entry div.info {
+			float: right;
+		}
+		
+		div.entry h1 {
+			font-size: 1.6em;
+		}
+		div.entry h2 {
+			font-size: 1.3em;
+		}
+		div.entry img {
+			width: 80%;
+			margin-left: 10%;
+			margin-right: 10%;
+		}
+		div.entry pre {
+			background-color: #FFFFFF;
+		}
+	</style>
+</head>
+<body lang="en-US">
+	<div class="head">
+		<h1>Random Projects</h1>
+	</div>
+	<# foreach(var entry in this.Entries) { #>
+	<div class="entry">
+		<div class="info"><#= entry.Author #> - <#= entry.CreationDate.ToShortDateString() #></div>
+		<#= this.markdown.Transform(entry.Text) #>
+	</div>
+	<# } #>
+</body>
+</html>
