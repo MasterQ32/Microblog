@@ -8,6 +8,7 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
+using System.Web;
 
 namespace Microblog
 {
@@ -23,7 +24,7 @@ namespace Microblog
 
 		static void Main(string[] args)
 		{
-			db = new SQLiteConnection("Data Source=microblog.db;Version=3;");
+			db = new SQLiteConnection(ServerSettings.Default.ConnectionString);
 			db.Open();
 
 			CreateTables();
@@ -39,7 +40,7 @@ namespace Microblog
 
 			using (var http = new HttpListener())
 			{
-				http.Prefixes.Add("http://+:80/");
+				http.Prefixes.Add(ServerSettings.Default.Prefix);
 				http.Start();
 
 				while (running)
@@ -109,7 +110,7 @@ namespace Microblog
 				cmd.CommandText = @"SELECT `Pubkey` FROM `Writers` WHERE `Name`=@name;";
 				cmd.Parameters.AddWithValue("@name", poster);
 				pubkey = cmd.ExecuteScalar() as string;
-            }
+			}
 
 			RSAParameters args = new RSAParameters();
 			args.Exponent = GetHexBytes(pubkey.Split('-')[0]);
@@ -213,6 +214,31 @@ namespace Microblog
 
 			response.ContentType = "text/html";
 
+			var query = HttpUtility.ParseQueryString(request.Url.Query);
+
+			int startPost = 0;
+			int numPosts = ServerSettings.Default.NumberOfPostsPerPage;
+			int postID = 0;
+			int editorID = 0;
+
+			if(query["page"] != null)
+			{
+				int page;
+				if (int.TryParse(query["page"], out page))
+				{
+					numPosts = ServerSettings.Default.NumberOfPostsPerPage;
+					startPost = page * numPosts;
+				}
+			}
+			if (query["post"] != null)
+			{
+				int.TryParse(query["post"], out postID);
+			}
+			if(query["editor"] != null)
+			{
+				int.TryParse(query["editor"], out editorID);
+			}
+
 			using (var sw = new StreamWriter(response.OutputStream, Encoding.UTF8))
 			{
 				var indexPage = new IndexPage(markdown);
@@ -225,9 +251,15 @@ namespace Microblog
 							FROM
 								`Entries`,`Writers`
 							WHERE
-								`Entries`.`Editor`=`Writers`.`ID`
-							ORDER BY `Entries`.`TimeStamp` DESC
-							LIMIT 0,3";
+								`Entries`.`Editor`=`Writers`.`ID`" + 
+							(postID != 0 ? "AND `Entries`.`ID` = @postId \n" : "") +
+							(editorID != 0 ? "AND `Entries`.`Editor` = @editorId \n" : "") +
+							@" ORDER BY `Entries`.`TimeStamp` DESC
+							LIMIT @start, @count";
+						cmd.Parameters.AddWithValue("@start", startPost);
+						cmd.Parameters.AddWithValue("@count", numPosts);
+						cmd.Parameters.AddWithValue("@editorId", editorID);
+						cmd.Parameters.AddWithValue("@postId", postID);
 						using (var reader = cmd.ExecuteReader())
 						{
 							while (reader.Read())
