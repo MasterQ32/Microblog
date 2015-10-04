@@ -1,6 +1,7 @@
 ﻿using MarkdownSharp;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Data.SQLite;
 using System.IO;
 using System.Linq;
@@ -67,7 +68,7 @@ namespace Microblog
 						}
 
 					}
-					catch(Exception ex)
+					catch (Exception ex)
 					{
 						using (var sw = new StreamWriter(context.Response.OutputStream, Encoding.UTF8))
 						{
@@ -146,7 +147,7 @@ namespace Microblog
 		static byte[] GetHexBytes(string text)
 		{
 			byte[] bits = new byte[text.Length / 2];
-			for(int i = 0; i < bits.Length; i++)
+			for (int i = 0; i < bits.Length; i++)
 			{
 				bits[i] = Convert.ToByte(text.Substring(2 * i, 2), 16);
 			}
@@ -216,68 +217,69 @@ namespace Microblog
 
 			var query = HttpUtility.ParseQueryString(request.Url.Query);
 
-			int startPost = 0;
-			int numPosts = ServerSettings.Default.NumberOfPostsPerPage;
 			int postID = 0;
 			int editorID = 0;
 			int currentPage = 1;
 
-			if(query["page"] != null)
+			if (query["page"] != null)
 			{
-				int page;
-				if (int.TryParse(query["page"], out page))
-				{
-					numPosts = ServerSettings.Default.NumberOfPostsPerPage;
-					startPost = page * numPosts;
-					currentPage = page + 1;
-				}
+				int.TryParse(query["page"], out currentPage);
 			}
 			if (query["post"] != null)
 			{
 				int.TryParse(query["post"], out postID);
 				currentPage = 0;
-
 			}
-			if(query["editor"] != null)
+			if (query["editor"] != null)
 			{
 				int.TryParse(query["editor"], out editorID);
-				currentPage = 0;
 			}
 
 			using (var sw = new StreamWriter(response.OutputStream, Encoding.UTF8))
 			{
 				var indexPage = new IndexPage(markdown);
+				indexPage.Query = query;
 				indexPage.CurrentPage = currentPage;
-				indexPage.NumberOfPages = (int)Math.Floor((double)GetEntryCount() / ServerSettings.Default.NumberOfPostsPerPage - 0.0001) + 1;
+				indexPage.NumberOfPages = (int)Math.Floor((double)GetEntryCount(editorID) / ServerSettings.Default.NumberOfPostsPerPage - 0.0001) + 1;
+
+				if (indexPage.CurrentPage > indexPage.NumberOfPages)
+					indexPage.CurrentPage = indexPage.NumberOfPages;
+
+				int startPost = 0;
+				int numPosts = ServerSettings.Default.NumberOfPostsPerPage;
+
+				if (indexPage.CurrentPage > 0)
 				{
-					using (var cmd = db.CreateCommand())
-					{
-						cmd.CommandText =
-							@"SELECT 
+					startPost = numPosts * (indexPage.CurrentPage - 1);
+				}
+
+				using (var cmd = db.CreateCommand())
+				{
+					cmd.CommandText =
+						@"SELECT 
 								`Entries`.`ID`, `Entries`.`Text`, `Entries`.`TimeStamp`, `Writers`.`Name`
 							FROM
 								`Entries`,`Writers`
 							WHERE
-								`Entries`.`Editor`=`Writers`.`ID`" + 
-							(postID != 0 ? "AND `Entries`.`ID` = @postId \n" : "") +
-							(editorID != 0 ? "AND `Entries`.`Editor` = @editorId \n" : "") +
-							@" ORDER BY `Entries`.`TimeStamp` DESC
+								`Entries`.`Editor`=`Writers`.`ID`" +
+						(postID != 0 ? "AND `Entries`.`ID` = @postId \n" : "") +
+						(editorID != 0 ? "AND `Entries`.`Editor` = @editorId \n" : "") +
+						@" ORDER BY `Entries`.`TimeStamp` DESC
 							LIMIT @start, @count";
-						cmd.Parameters.AddWithValue("@start", startPost);
-						cmd.Parameters.AddWithValue("@count", numPosts);
-						cmd.Parameters.AddWithValue("@editorId", editorID);
-						cmd.Parameters.AddWithValue("@postId", postID);
-						using (var reader = cmd.ExecuteReader())
+					cmd.Parameters.AddWithValue("@start", startPost);
+					cmd.Parameters.AddWithValue("@count", numPosts);
+					cmd.Parameters.AddWithValue("@editorId", editorID);
+					cmd.Parameters.AddWithValue("@postId", postID);
+					using (var reader = cmd.ExecuteReader())
+					{
+						while (reader.Read())
 						{
-							while (reader.Read())
-							{
-								var entry = new BlogEntry();
-								entry.ID = reader.GetInt32(0);
-								entry.Text = reader.GetString(1);
-								entry.CreationDate = DateTime.FromBinary(reader.GetInt64(2));
-								entry.Author = reader.GetString(3);
-								indexPage.Entries.Add(entry);
-							}
+							var entry = new BlogEntry();
+							entry.ID = reader.GetInt32(0);
+							entry.Text = reader.GetString(1);
+							entry.CreationDate = DateTime.FromBinary(reader.GetInt64(2));
+							entry.Author = reader.GetString(3);
+							indexPage.Entries.Add(entry);
 						}
 					}
 				}
@@ -285,13 +287,15 @@ namespace Microblog
 				sw.Write(indexPage.TransformText());
 				sw.Flush();
 			}
-
 		}
-
-		static int GetEntryCount()
+		
+		static int GetEntryCount(int editor)
 		{
 			var cmd = db.CreateCommand();
 			cmd.CommandText = "SELECT Count(*) FROM `Entries`";
+			if (editor != 0)
+				cmd.CommandText += " WHERE `Entries`.`Editor` = @editor";
+			cmd.Parameters.AddWithValue("@editor", editor);
 			return (int)(long)cmd.ExecuteScalar();
 		}
 	}
@@ -313,6 +317,8 @@ namespace Microblog
 		public int NumberOfPages { get; set; } = 1;
 
 		public int CurrentPage { get; set; } = 0;
+
+		public NameValueCollection Query { get; set; } = new NameValueCollection();
 
 		public IList<BlogEntry> Entries { get; set; } = new List<BlogEntry>();
 	}

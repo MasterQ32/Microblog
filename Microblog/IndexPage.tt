@@ -108,7 +108,7 @@
 			if (i == this.CurrentPage) { #>
 			<li class="selected"><#= i #></li>
 		<# } else { #>
-			<li><a href="?page=<#= i-1 #>"><#= i #></a></li>
+			<li><a href="?page=<#= i #><# if(this.Query["editor"] != null) this.Write("&editor=" + this.Query["editor"]); #>"><#= i #></a></li>
 		<# }
 		} #>
 		</ul>

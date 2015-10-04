@@ -76,7 +76,13 @@ namespace Microblog
             this.Write("\t\t\t<li><a href=\"?page=");
             
             #line 111 "C:\Users\Felix\Source\Repos\Microblog\Microblog\IndexPage.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(i-1));
+            this.Write(this.ToStringHelper.ToStringWithCulture(i));
+            
+            #line default
+            #line hidden
+            
+            #line 111 "C:\Users\Felix\Source\Repos\Microblog\Microblog\IndexPage.tt"
+ if(this.Query["editor"] != null) this.Write("&editor=" + this.Query["editor"]); 
             
             #line default
             #line hidden
