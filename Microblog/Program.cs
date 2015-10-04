@@ -220,6 +220,7 @@ namespace Microblog
 			int numPosts = ServerSettings.Default.NumberOfPostsPerPage;
 			int postID = 0;
 			int editorID = 0;
+			int currentPage = 1;
 
 			if(query["page"] != null)
 			{
@@ -228,26 +229,32 @@ namespace Microblog
 				{
 					numPosts = ServerSettings.Default.NumberOfPostsPerPage;
 					startPost = page * numPosts;
+					currentPage = page + 1;
 				}
 			}
 			if (query["post"] != null)
 			{
 				int.TryParse(query["post"], out postID);
+				currentPage = 0;
+
 			}
 			if(query["editor"] != null)
 			{
 				int.TryParse(query["editor"], out editorID);
+				currentPage = 0;
 			}
 
 			using (var sw = new StreamWriter(response.OutputStream, Encoding.UTF8))
 			{
 				var indexPage = new IndexPage(markdown);
+				indexPage.CurrentPage = currentPage;
+				indexPage.NumberOfPages = (int)Math.Floor((double)GetEntryCount() / ServerSettings.Default.NumberOfPostsPerPage - 0.0001) + 1;
 				{
 					using (var cmd = db.CreateCommand())
 					{
 						cmd.CommandText =
 							@"SELECT 
-								`Entries`.`Text`, `Entries`.`TimeStamp`, `Writers`.`Name`
+								`Entries`.`ID`, `Entries`.`Text`, `Entries`.`TimeStamp`, `Writers`.`Name`
 							FROM
 								`Entries`,`Writers`
 							WHERE
@@ -265,9 +272,10 @@ namespace Microblog
 							while (reader.Read())
 							{
 								var entry = new BlogEntry();
-								entry.Text = reader.GetString(0);
-								entry.CreationDate = DateTime.FromBinary(reader.GetInt64(1));
-								entry.Author = reader.GetString(2);
+								entry.ID = reader.GetInt32(0);
+								entry.Text = reader.GetString(1);
+								entry.CreationDate = DateTime.FromBinary(reader.GetInt64(2));
+								entry.Author = reader.GetString(3);
 								indexPage.Entries.Add(entry);
 							}
 						}
@@ -278,6 +286,13 @@ namespace Microblog
 				sw.Flush();
 			}
 
+		}
+
+		static int GetEntryCount()
+		{
+			var cmd = db.CreateCommand();
+			cmd.CommandText = "SELECT Count(*) FROM `Entries`";
+			return (int)(long)cmd.ExecuteScalar();
 		}
 	}
 
@@ -295,6 +310,10 @@ namespace Microblog
 			this.markdown = markdown;
 		}
 
+		public int NumberOfPages { get; set; } = 1;
+
+		public int CurrentPage { get; set; } = 0;
+
 		public IList<BlogEntry> Entries { get; set; } = new List<BlogEntry>();
 	}
 
@@ -303,5 +322,6 @@ namespace Microblog
 		public DateTime CreationDate { get; set; } = DateTime.Now;
 		public string Author { get; set; } = "unknown";
 		public string Text { get; set; } = "";
+		public int ID { get; set; } = 0;
 	}
 }

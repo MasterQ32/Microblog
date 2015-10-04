@@ -28,98 +28,111 @@ namespace Microblog
         /// </summary>
         public virtual string TransformText()
         {
-            this.Write(@"<!DOCTYPE html>
-<html>
-<head>
-	<title>Random Projects</title>
-	<meta http-equiv=""Content-Type"" content=""text/html;charset=UTF-8"">
-	
-	<style type=""text/css"" media=""screen"">
-		html {
-			max-width: 1024px;
-			padding-left: 2em;
-			padding-right: 2em;
-			padding-top: 1em;
-			padding-bottom: 1em;
-			margin-left: auto;
-			margin-right: auto;
-			background-color: cornflowerblue;
-		}
-		h1 {
-			margin: 0px;
-		}
-		div.head {
-			text-align: center;
-		}
-		div.head h1 {
-			margin: 0em;
-		}
-		div.entry {
-			width: 100%;
-			background-color: silver;
-			border-style: solid;
-			border-radius: 0.5em;
-			border-width: 1px;
-			border-color: transparent;
-			margin-top: 1em;
-			margin-bottom: 1em;
-			padding: 0.5em;
-		}
-		div.entry div.info {
-			float: right;
-		}
-		
-		div.entry h1 {
-			font-size: 1.6em;
-		}
-		div.entry h2 {
-			font-size: 1.3em;
-		}
-		div.entry img {
-			width: 80%;
-			margin-left: 10%;
-			margin-right: 10%;
-		}
-		div.entry pre {
-			background-color: #FFFFFF;
-		}
-	</style>
-</head>
-<body lang=""en-US"">
-	<div class=""head"">
-		<h1>Random Projects</h1>
-	</div>
-	");
+            this.Write("<!DOCTYPE html>\r\n<html>\r\n<head>\r\n\t<title>Random Projects</title>\r\n\t<meta http-equ" +
+                    "iv=\"Content-Type\" content=\"text/html;charset=UTF-8\">\r\n\t\r\n\t<style type=\"text/css\"" +
+                    " media=\"screen\">\r\n\t\thtml {\r\n\t\t\tmax-width: 1024px;\r\n\t\t\tpadding-left: 2em;\r\n\t\t\tpad" +
+                    "ding-right: 2em;\r\n\t\t\tpadding-top: 1em;\r\n\t\t\tpadding-bottom: 1em;\r\n\t\t\tmargin-left:" +
+                    " auto;\r\n\t\t\tmargin-right: auto;\r\n\t\t\tbackground-color: cornflowerblue;\r\n\t\t}\r\n\t\th1 " +
+                    "{\r\n\t\t\tmargin: 0px;\r\n\t\t}\r\n\t\tdiv.head {\r\n\t\t\ttext-align: center;\r\n\t\t}\r\n\t\tdiv.head h" +
+                    "1 {\r\n\t\t\tmargin: 0em;\r\n\t\t}\r\n\t\tnav.menu {\r\n\t\t\twidth: 100%;\r\n\t\t\tbackground-color: s" +
+                    "ilver;\r\n\r\n\t\t\t\r\n\t\t\twidth: 100%;\r\n\t\t\tbackground-color: silver;\r\n\t\t\tborder-style: s" +
+                    "olid;\r\n\t\t\tborder-radius: 0.5em;\r\n\t\t\tborder-width: 1px;\r\n\t\t\tborder-color: transpa" +
+                    "rent;\r\n\t\t\tmargin-top: 1em;\r\n\t\t\tmargin-bottom: 1em;\r\n\t\t\tpadding: 0.5em;\r\n\t\t}\r\n\t\tn" +
+                    "av.menu ul {\r\n\t\t\tlist-style-type: none;\r\n\t\t\tpadding: 0px;\r\n\t\t\tmargin: 0px;\r\n\t\t\tb" +
+                    "order-radius: 0.3em;\r\n\t\t}\r\n\t\tnav.menu ul li {\r\n\t\t\tdisplay: inline-block;\r\n\t\t\twid" +
+                    "th: 1em;\r\n\t\t\ttext-align: center;\r\n\t\t\tborder-radius: 0.3em;\r\n\t\t\tbackground-color:" +
+                    " #eee;\r\n\t\t}\r\n\t\tnav.menu ul li.selected {\r\n\t\t\tbackground-color: white;\r\n\t\t\tfont-w" +
+                    "eight: bold;\r\n\t\t}\r\n\t\tnav.menu ul li a {\r\n\t\t\tdisplay: block;\r\n\t\t\ttext-decoration:" +
+                    " none;\r\n\t\t}\r\n\t\tdiv.entry {\r\n\t\t\twidth: 100%;\r\n\t\t\tbackground-color: silver;\r\n\t\t\tbo" +
+                    "rder-style: solid;\r\n\t\t\tborder-radius: 0.5em;\r\n\t\t\tborder-width: 1px;\r\n\t\t\tborder-c" +
+                    "olor: transparent;\r\n\t\t\tmargin-top: 1em;\r\n\t\t\tmargin-bottom: 1em;\r\n\t\t\tpadding: 0.5" +
+                    "em;\r\n\t\t}\r\n\t\tdiv.entry div.info {\r\n\t\t\tfloat: right;\r\n\t\t}\r\n\t\t\r\n\t\tdiv.entry h1 {\r\n\t" +
+                    "\t\tfont-size: 1.6em;\r\n\t\t}\r\n\t\tdiv.entry h2 {\r\n\t\t\tfont-size: 1.3em;\r\n\t\t}\r\n\t\tdiv.ent" +
+                    "ry img {\r\n\t\t\twidth: 80%;\r\n\t\t\tmargin-left: 10%;\r\n\t\t\tmargin-right: 10%;\r\n\t\t}\r\n\t\tdi" +
+                    "v.entry pre {\r\n\t\t\tbackground-color: #FFFFFF;\r\n\t\t\tpadding: 0.5em;\r\n\t\t\tborder-radi" +
+                    "us: 0.3em;\r\n\t\t}\r\n\t</style>\r\n</head>\r\n<body lang=\"en-US\">\r\n\t<div class=\"head\">\r\n\t" +
+                    "\t<h1>Random Projects</h1>\r\n\t</div>\r\n\t<nav class=\"menu\">\r\n\t\t<ul>\r\n\t\t");
             
-            #line 67 "C:\Users\Felix\Source\Repos\Microblog\Microblog\IndexPage.tt"
+            #line 107 "C:\Users\Felix\Source\Repos\Microblog\Microblog\IndexPage.tt"
+ for(int i = 1; i <= this.NumberOfPages; i++) {
+			if (i == this.CurrentPage) { 
+            
+            #line default
+            #line hidden
+            this.Write("\t\t\t<li class=\"selected\">");
+            
+            #line 109 "C:\Users\Felix\Source\Repos\Microblog\Microblog\IndexPage.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(i));
+            
+            #line default
+            #line hidden
+            this.Write("</li>\r\n\t\t");
+            
+            #line 110 "C:\Users\Felix\Source\Repos\Microblog\Microblog\IndexPage.tt"
+ } else { 
+            
+            #line default
+            #line hidden
+            this.Write("\t\t\t<li><a href=\"?page=");
+            
+            #line 111 "C:\Users\Felix\Source\Repos\Microblog\Microblog\IndexPage.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(i-1));
+            
+            #line default
+            #line hidden
+            this.Write("\">");
+            
+            #line 111 "C:\Users\Felix\Source\Repos\Microblog\Microblog\IndexPage.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(i));
+            
+            #line default
+            #line hidden
+            this.Write("</a></li>\r\n\t\t");
+            
+            #line 112 "C:\Users\Felix\Source\Repos\Microblog\Microblog\IndexPage.tt"
+ }
+		} 
+            
+            #line default
+            #line hidden
+            this.Write("\t\t</ul>\r\n\t</nav>\r\n\t");
+            
+            #line 116 "C:\Users\Felix\Source\Repos\Microblog\Microblog\IndexPage.tt"
  foreach(var entry in this.Entries) { 
             
             #line default
             #line hidden
             this.Write("\t<div class=\"entry\">\r\n\t\t<div class=\"info\">");
             
-            #line 69 "C:\Users\Felix\Source\Repos\Microblog\Microblog\IndexPage.tt"
+            #line 118 "C:\Users\Felix\Source\Repos\Microblog\Microblog\IndexPage.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(entry.Author));
             
             #line default
             #line hidden
             this.Write(" - ");
             
-            #line 69 "C:\Users\Felix\Source\Repos\Microblog\Microblog\IndexPage.tt"
+            #line 118 "C:\Users\Felix\Source\Repos\Microblog\Microblog\IndexPage.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(entry.CreationDate.ToShortDateString()));
+            
+            #line default
+            #line hidden
+            this.Write(" ");
+            
+            #line 118 "C:\Users\Felix\Source\Repos\Microblog\Microblog\IndexPage.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(entry.CreationDate.ToShortTimeString()));
             
             #line default
             #line hidden
             this.Write("</div>\r\n\t\t");
             
-            #line 70 "C:\Users\Felix\Source\Repos\Microblog\Microblog\IndexPage.tt"
+            #line 119 "C:\Users\Felix\Source\Repos\Microblog\Microblog\IndexPage.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(this.markdown.Transform(entry.Text)));
             
             #line default
             #line hidden
             this.Write("\r\n\t</div>\r\n\t");
             
-            #line 72 "C:\Users\Felix\Source\Repos\Microblog\Microblog\IndexPage.tt"
+            #line 121 "C:\Users\Felix\Source\Repos\Microblog\Microblog\IndexPage.tt"
  } 
             
             #line default

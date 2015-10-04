@@ -29,6 +29,42 @@
 		div.head h1 {
 			margin: 0em;
 		}
+		nav.menu {
+			width: 100%;
+			background-color: silver;
+
+			
+			width: 100%;
+			background-color: silver;
+			border-style: solid;
+			border-radius: 0.5em;
+			border-width: 1px;
+			border-color: transparent;
+			margin-top: 1em;
+			margin-bottom: 1em;
+			padding: 0.5em;
+		}
+		nav.menu ul {
+			list-style-type: none;
+			padding: 0px;
+			margin: 0px;
+			border-radius: 0.3em;
+		}
+		nav.menu ul li {
+			display: inline-block;
+			width: 1em;
+			text-align: center;
+			border-radius: 0.3em;
+			background-color: #eee;
+		}
+		nav.menu ul li.selected {
+			background-color: white;
+			font-weight: bold;
+		}
+		nav.menu ul li a {
+			display: block;
+			text-decoration: none;
+		}
 		div.entry {
 			width: 100%;
 			background-color: silver;
@@ -57,6 +93,8 @@
 		}
 		div.entry pre {
 			background-color: #FFFFFF;
+			padding: 0.5em;
+			border-radius: 0.3em;
 		}
 	</style>
 </head>
@@ -64,9 +102,20 @@
 	<div class="head">
 		<h1>Random Projects</h1>
 	</div>
+	<nav class="menu">
+		<ul>
+		<# for(int i = 1; i <= this.NumberOfPages; i++) {
+			if (i == this.CurrentPage) { #>
+			<li class="selected"><#= i #></li>
+		<# } else { #>
+			<li><a href="?page=<#= i-1 #>"><#= i #></a></li>
+		<# }
+		} #>
+		</ul>
+	</nav>
 	<# foreach(var entry in this.Entries) { #>
 	<div class="entry">
-		<div class="info"><#= entry.Author #> - <#= entry.CreationDate.ToShortDateString() #></div>
+		<div class="info"><#= entry.Author #> - <#= entry.CreationDate.ToShortDateString() #> <#= entry.CreationDate.ToShortTimeString() #></div>
 		<#= this.markdown.Transform(entry.Text) #>
 	</div>
 	<# } #>
