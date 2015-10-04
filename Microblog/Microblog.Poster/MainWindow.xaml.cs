@@ -67,6 +67,12 @@ namespace Microblog.Poster
 		{
 			string text = this.content.Text;
 
+			if(text.Length < 10)
+			{
+				MessageBox.Show(this, "You must post at least 10 characters!", this.Title, MessageBoxButton.OK, MessageBoxImage.Warning);
+				return;
+			}
+
 			var payload = Encoding.UTF8.GetBytes(text);
 
 			var signature = SignData(payload, LoadParameters());
@@ -75,12 +81,15 @@ namespace Microblog.Poster
 			{
 				client.Headers.Add("Post-User", "Felix Queißner");
 				client.Headers.Add("Post-Signature", signature);
-				using (var stream = client.OpenWrite("http://localhost:80/", "POST"))
+				/* using (var stream = client.OpenWrite("http://www.random-projects.net:80/", "POST"))
 				{
 					stream.Write(payload, 0, payload.Length);
 					stream.Flush();
-				}
+				}*/
+				MessageBox.Show(Encoding.UTF8.GetString(client.UploadData("http://www.random-projects.net:80", "POST", payload)));
 			}
+
+			this.content.Text = "";
 		}
 
 		public static string SignData(byte[] message, RSAParameters privateKey)

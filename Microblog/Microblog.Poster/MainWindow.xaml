@@ -8,11 +8,12 @@
 		Title="MainWindow" Height="350" Width="525">
 	<DockPanel>
 		<StackPanel DockPanel.Dock="Bottom" HorizontalAlignment="Right" Orientation="Horizontal">
+            <TextBlock VerticalAlignment="Center">Public Key:</TextBlock>
 			<TextBox x:Name="pubkey" IsReadOnly="True" Width="300" Margin="8,4,4,8" VerticalAlignment="Center"/>
 			<Button Margin="8,4,8,8" Padding="4" Click="Button_Click">Post!</Button>
 		</StackPanel>
-		<TextBox x:Name="content" AcceptsReturn="True" AcceptsTab="True" Margin="8">
-			
+		<TextBox x:Name="content" AcceptsReturn="True" AcceptsTab="True" Margin="8" FontFamily="Consolas">
+			# Title
 		</TextBox>
 	</DockPanel>
 </Window>

@@ -74,12 +74,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="entries\1-another-test.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="entries\0-initial.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="packages.config" />
     <None Include="ServerSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -87,9 +81,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="index.htm">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="IndexPage.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>IndexPage.cs</LastGenOutput>
